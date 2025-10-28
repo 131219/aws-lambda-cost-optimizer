@@ -1,6 +1,9 @@
 AWS Lambda Cost Optimizer
 Efficiently reduce your AWS Lambda costs! This Python tool analyzes Lambda configurations and suggests concrete optimizations, drawing on real-world cloud best practices. Great for students, engineers, and cloud practitioners seeking scalable solutions.
 
+![Demo Screenshot](screenshot.png)
+
+
 Features
 Analyzes Lambda timeout, memory, and concurrency settings
 
