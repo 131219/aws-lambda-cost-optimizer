@@ -1,21 +1,35 @@
-"""AWS Lambda Cost Optimizer"""
-
 def analyze_lambda(config):
-    """Analyzes Lambda config for cost optimization."""
-    suggestions = []
-    if config.get('timeout', 3) > 15:
-        suggestions.append("Reduce timeout: Most Lambdas finish in < 10s.")
-    if config.get('memory', 128) > 512:
-        suggestions.append("Reduce memory if possible: Costs rise with allocation.")
-    if not config.get('provisioned_concurrency'):
-        suggestions.append("Enable provisioned concurrency for predictable workloads.")
-    return suggestions
+    # Validate input
+    if not config or not isinstance(config, dict):
+        raise ValueError('Config must be a non-empty dictionary')
 
-# Example usage
-if __name__ == "__main__":
-    lambda_config = {
-        'timeout': 20,
-        'memory': 1024,
-        'provisioned_concurrency': False
-    }
-    print(analyze_lambda(lambda_config))
+    suggestions = []
+
+    # Check timeout
+    timeout = config.get('timeout')
+    if timeout is None:
+        raise ValueError('Missing "timeout" in config')
+    elif not isinstance(timeout, (int, float)) or timeout <= 0:
+        raise ValueError('"timeout" must be a positive number')
+    elif timeout > 10:
+        suggestions.append('Reduce timeout: Most Lambdas finish in < 10s.')
+
+    # Check memory
+    memory = config.get('memory')
+    if memory is None:
+        raise ValueError('Missing "memory" in config')
+    elif not isinstance(memory, (int, float)) or memory <= 0:
+        raise ValueError('"memory" must be a positive number')
+    elif memory > 512:
+        suggestions.append('Reduce memory if possible: Costs rise with allocation.')
+
+    # Check provisioned concurrency
+    provisioned = config.get('provisioned_concurrency')
+    if provisioned is None:
+        raise ValueError('Missing "provisioned_concurrency" in config')
+    elif not isinstance(provisioned, bool):
+        raise ValueError('"provisioned_concurrency" must be a boolean')
+    elif not provisioned:
+        suggestions.append('Enable provisioned concurrency for predictable workloads.')
+
+    return suggestions
